@@ -1,3 +1,5 @@
+library(tidyverse)
+
 N <- 10000
 beta_age  <- 0.15
 beta_age2 <- -0.002
@@ -18,3 +20,24 @@ population <- tibble(
     beta_sex_bmi2 * sex * (bmi - 23)^2,
   time_sport = pmax(0, base_time_sport + rnorm(N, mean = 0, sd = 3))
 )
+
+gamma_0 <- -2.5
+gamma_1 <- -0.05
+gamma_2 <- -0.1
+
+population <- population |> 
+  mutate(
+    logit_pi = gamma_0 + gamma_1 * age + gamma_2 * (bmi-22)^2,
+    pi_np = 1 / (1 + exp(-logit_pi))
+  )
+
+n_np <- 1000
+non_probability_sample <- population  |> 
+  slice_sample(n = n_np, weight_by = pi_np) |> 
+  select(!c(logit_pi, pi_np))
+
+n_p <- 2000
+probability_sample <- population |>
+  anti_join(non_probability_sample, by='index') |> 
+  slice_sample(n = n_p) |> 
+  select(!c(base_time_sport, time_sport, logit_pi, pi_np))
