@@ -60,3 +60,11 @@ probability_sample_svy <- svydesign(
   weights = ~weight,
   fpc = ~population_size
 )
+
+mi_glm <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'glm',
+  family_outcome = 'gaussian'
+  )
