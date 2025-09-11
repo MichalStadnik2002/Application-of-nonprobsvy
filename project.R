@@ -20,6 +20,8 @@ population <- tibble(
     beta_sex_bmi2 * sex * (bmi - 23)^2,
   time_sport = pmax(0, base_time_sport + rnorm(N, mean = 0, sd = 3))
 )
+true_mean <- mean(population$time_sport)
+true_sd <- sd(population$time_sport)
 
 gamma_0 <- -2.5
 gamma_1 <- -0.05
@@ -41,3 +43,5 @@ probability_sample <- population |>
   anti_join(non_probability_sample, by='index') |> 
   slice_sample(n = n_p) |> 
   select(!c(base_time_sport, time_sport, logit_pi, pi_np))
+naive_mean <- mean(non_probability_sample$time_sport)
+naive_sd <- sd(non_probability_sample$time_sport)
