@@ -50,3 +50,13 @@ probability_sample <- population |>
 
 naive_mean <- mean(non_probability_sample$time_sport)
 naive_sd <- sd(non_probability_sample$time_sport)
+
+library(nonprobsvy)
+library(survey)
+
+probability_sample_svy <- svydesign(
+  ids = ~1,
+  data = probability_sample,
+  weights = ~weight,
+  fpc = ~population_size
+)
