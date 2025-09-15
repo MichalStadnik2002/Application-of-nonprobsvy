@@ -126,3 +126,39 @@ mi_pmm_2 <- nonprob(
   family_outcome = 'gaussian',
   control_outcome = control_out(pmm_match_type = 2)
 )
+
+ipw <- nonprob(
+  data=non_probability_sample, 
+  selection = ~ sex + bmi + age,
+  target = ~ time_sport,
+  svydesign = probability_sample_svy,
+  method_selection = "logit"
+)
+
+ipw_gee_1 <- nonprob(
+  data=non_probability_sample, 
+  selection = ~ sex + bmi + age,
+  target = ~ time_sport,
+  svydesign = probability_sample_svy,
+  method_selection = "logit",
+  control_selection = control_sel(est_method = "gee", gee_h_fun = 1)
+)
+
+ipw_gee_2 <- nonprob(
+  data=non_probability_sample, 
+  selection = ~ sex + bmi + age,
+  target = ~ time_sport,
+  svydesign = probability_sample_svy,
+  method_selection = "logit",
+  control_selection = control_sel(est_method = "gee", gee_h_fun = 2)
+)
+
+ipw_gee_var_sel <- nonprob(
+  data=non_probability_sample, 
+  selection = ~ sex + bmi + age,
+  target = ~ time_sport,
+  svydesign = probability_sample_svy,
+  method_selection = "logit",
+  control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
+  control_inference = control_inf(vars_selection = TRUE)
+)
