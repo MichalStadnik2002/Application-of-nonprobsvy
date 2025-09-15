@@ -68,3 +68,61 @@ mi_glm <- nonprob(
   method_outcome = 'glm',
   family_outcome = 'gaussian'
   )
+
+mi_glm_var_sel <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'glm',
+  family_outcome = 'gaussian',
+  control_outcome = control_out(penalty = "lasso"), 
+  control_inference = control_inf(vars_selection = TRUE)
+)
+
+mi_npar <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'npar',
+)
+
+mi_nn_2 <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'nn',
+  control_outcome = control_out(k=2)
+)
+
+mi_nn_5 <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'nn',
+  control_outcome = control_out(k=5)
+)
+
+mi_nn_10 <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'nn',
+  control_outcome = control_out(k=10)
+)
+
+mi_pmm <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'pmm',
+  family_outcome = 'gaussian'
+)
+
+mi_pmm_2 <- nonprob(
+  data=non_probability_sample, 
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'pmm',
+  family_outcome = 'gaussian',
+  control_outcome = control_out(pmm_match_type = 2)
+)
