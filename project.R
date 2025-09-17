@@ -187,3 +187,11 @@ raw_results <- sapply(methods, function(method){
   }
 )
 results <- as.data.frame(t(raw_results))
+
+library(ggplot2)
+
+ggplot(data=results, aes(y=row.names(results)))+
+  geom_errorbar(aes(xmin = lower, xmax = upper))+
+  geom_point(aes(x=mean))+
+  geom_vline(aes(xintercept =  true_mean), colour = 'red')+
+  geom_vline(aes(xintercept =  naive_mean), colour = 'grey')
