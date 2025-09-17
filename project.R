@@ -162,3 +162,28 @@ ipw_gee_var_sel <- nonprob(
   control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
   control_inference = control_inf(vars_selection = TRUE)
 )
+methods <- list(
+  mi_glm = mi_glm,
+  mi_glm_var_sel = mi_glm_var_sel,
+  mi_npar = mi_npar,
+  mi_nn_2 = mi_nn_2,
+  mi_nn_5 = mi_nn_5,
+  mi_nn_10 = mi_nn_10,
+  mi_pmm = mi_pmm,
+  mi_pmm_2 = mi_pmm_2,
+  ipw = ipw,
+  ipw_gee_1 = ipw_gee_1,
+  ipw_gee_2 = ipw_gee_2,
+  ipw_gee_var_sel = ipw_gee_var_sel
+)
+
+raw_results <- sapply(methods, function(method){
+    c(
+      mean = method$output$mean,
+      se = method$output$SE,
+      lower = method$confidence_interval$lower_bound,
+      upper = method$confidence_interval$upper_bound
+    )
+  }
+)
+results <- as.data.frame(t(raw_results))
