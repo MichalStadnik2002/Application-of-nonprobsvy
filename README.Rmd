@@ -10,3 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 In this project I investigated the concepts of `nonprobsvy` library to check how different estimators behave. There is a simulation of a population where weekly time spent on sport activities depends on sex, BMI and age. From this population a non-probability and a probability sample are drawn. Then various estimators provided by `nonprobsvy` library (IPW, MI, DR) are used to estimate average weekly time spent on sport. Finally all estimates were presented on the graph and compared to the true mean.
+
+## Motivation
+
+The `nonprobsvy` library was created to implement solutions to the non-probability samples problem. For example, suppose we have an online survey and want to estimate a parameter for the whole population based on it. Most likely, a majority of the answers would be given by young people, and older people would be underrepresented in our sample. If only we have some external, unbiased data containing variables that are correlated with our outcome of interest, we can use the tools from the `nonprobsvy` library to correct for this bias.
+
+I created this project because I want to understand the basics of the non-probability samples problem and to prepare for applying for an internship in a project developing the `nonprobsvy` library. This work is based on the article "nonprobsvy – An R package for modern methods for non-probability surveys" by M. Beręsewicz, P. Chlebicki, and Ł. Chrostowski.
+
