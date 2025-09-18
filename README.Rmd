@@ -1,0 +1,12 @@
+---
+title: "Verification of Estimators for Non-Probability Samples in R"
+author: "Michał Stadnik"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this project I investigated the concepts of `nonprobsvy` library to check how different estimators behave. There is a simulation of a population where weekly time spent on sport activities depends on sex, BMI and age. From this population a non-probability and a probability sample are drawn. Then various estimators provided by `nonprobsvy` library (IPW, MI, DR) are used to estimate average weekly time spent on sport. Finally all estimates were presented on the graph and compared to the true mean.
