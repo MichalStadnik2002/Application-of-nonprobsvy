@@ -2,7 +2,7 @@
 title: "Verification of Estimators for Non-Probability Samples in R"
 author: "Michał Stadnik"
 date: "`r Sys.Date()`"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -22,6 +22,7 @@ I created this project because I want to understand the basics of the non-probab
 ### Generating data
 
 I used three auxiliary variables:
+
 - `sex` - generated from binomial distribution with a probability of 0.51, where 1 indicates female,
 - `bmi` - generated from gamma distribution with shape parameter equals 4.5 and scale equals 2.2. The whole distribution was shifted by adding 14 so that the average BMI was about 23,
 - `age` - generated from beta distribution with alpha = 2 and beta = 3. Then it was scaled and shifted appropriately. It was assumed that the age ranges from 18 to 80 years old.
