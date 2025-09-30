@@ -59,3 +59,31 @@ where gammas are coefficients. In simulation I used:
 A sample of 1000 individuals was drawn with probabilities $\pi_{NP}$.
 
 To ensure no overlap between the samples (as required by the package), the probability sample was drawn uniformly from the population excluding individuals already selected for the non-probability sample. The probability sample has 2000 records.
+
+### Compared estimators
+
+I used all three kinds of estimators: Mass Imputation (MI), Inverse Probability Weighting (IPW) and Doubly Robust (DR). Within each approach I used following methods:
+
+- Mass Imputation:
+  - semi-parametric method (MI-GLM),
+  - semi-parametric method with variable selection,
+  - kernel smoothing (MI-NPAR),
+  - nearest neighbour matching (MI-NN) with:
+    - $k = 2$,
+    - $k = 5$,
+    - $k = 10$,
+  - predictive mean matching with matching predicted to predicted (MI-PMM-A),
+  - predictive mean matching with matching predicted to observed (MI-PMM-B),
+- Inverse Probability Weighting:
+  - by Maximum Pseudo-Likelihood Estimator (MLE),
+  - by Generalized Estimating Equations (GEE):
+    - with h function: $h(x_i, \gamma) = \frac{x_i}{\pi(x_i, \gamma)}$ (`gee_h_fun = 1`),
+    - with h function: $h(x_i, \gamma) = x_i$ (`gee_h_fun = 2`),
+    - with h function: `gee_h_fun = 1` and variable selection,
+- Doubly Robust:
+  - MI-GLM and MLE Estimator,
+  - MI-GLM and GEE Estimator with `gee_h_fun = 1`,
+  - MI-GLM and MLE Estimator with bias correction,
+  - MI-GLM and GEE Estimator with `gee_h_fun = 1` with bias correction,
+
+For reference purposes I also calculated the true population mean, and the naive mean, i.e. ordinary mean in non-probability sample.
