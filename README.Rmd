@@ -87,3 +87,32 @@ I used all three kinds of estimators: Mass Imputation (MI), Inverse Probability 
   - MI-GLM and GEE Estimator with `gee_h_fun = 1` with bias correction,
 
 For reference purposes I also calculated the true population mean, and the naive mean, i.e. ordinary mean in non-probability sample.
+
+## Results
+
+The results of all used estimators are shown in the following figure. Each point on the graph represents the estimated mean, while the horizontal bars represent the corresponding 95% confidence intervals. The true mean is presented as red line and the naive mean - as grey line.
+
+![](Rplot_seed0.png)
+
+Here is also the table with the results:
+
+| Estimator              |   mean   |     sd     |  lower  |  upper  |
+|--------------------|----------|------------|---------|---------|
+| mi_glm             | 7.125960 | 0.125350518| 6.880278| 7.371643|
+| mi_glm_var_sel     | 7.139525 | 0.125721603| 6.893115| 7.385934|
+| mi_npar            | 6.004240 | 0.095343432| 5.817371| 6.191110|
+| mi_nn_2            | 6.710988 | 0.044896895| 6.622991| 6.798984|
+| mi_nn_5            | 6.858930 | 0.029078144| 6.801938| 6.915922|
+| mi_nn_10           | 6.874241 | 0.021044160| 6.832995| 6.915486|
+| mi_pmm             | 6.765816 | 0.030146067| 6.706731| 6.824901|
+| mi_pmm_2           | 7.125875 | 0.007859339| 7.110471| 7.141279|
+| ipw                | 6.840697 | 0.432708215| 5.992604| 7.688789|
+| ipw_gee_1          | 6.959392 | 0.514421215| 5.951145| 7.967639|
+| ipw_gee_2          | 6.840697 | 0.432708215| 5.992604| 7.688789|
+| ipw_gee_var_sel    | 6.959392 | 0.514421215| 5.951145| 7.967639|
+| dr_glm_mle         | 7.005543 | 0.192400583| 6.628445| 7.382641|
+| dr_glm_gee         | 7.005543 | 0.192400583| 6.628445| 7.382641|
+| dr_glm_mle_bias_min| 6.996586 | 0.031234612| 6.935367| 7.057805|
+| dr_glm_gee_bias_min| 6.996586 | 0.031234612| 6.935367| 7.057805|
+
+The naive mean equals $7.14$ and the true mean equals $6.33$.
