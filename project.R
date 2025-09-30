@@ -1,4 +1,5 @@
 library(tidyverse)
+set.seed(0)
 
 N <- 10000
 beta_age  <- 0.15
@@ -16,7 +17,7 @@ population <- tibble(
     beta_age * age +
     beta_age2 * age^2 +
     beta_sex * sex +
-    beta_bmi * (bmi - 22)^2 +
+    beta_bmi * (bmi - 23)^2 +
     beta_sex_bmi2 * sex * (bmi - 23)^2,
   time_sport = pmax(0, base_time_sport + rnorm(N, mean = 0, sd = 3))
 )
@@ -29,7 +30,7 @@ gamma_2 <- -0.1
 
 population <- population |> 
   mutate(
-    logit_pi = gamma_0 + gamma_1 * age + gamma_2 * (bmi-22)^2,
+    logit_pi = gamma_0 + gamma_1 * age + gamma_2 * (bmi-23)^2,
     pi_np = 1 / (1 + exp(-logit_pi))
   )
 
