@@ -42,3 +42,20 @@ where betas are coefficients. In simulation I used:
 - $\beta_{sex\_BMI2} = 0.01$, the effect of high or low BMI is slightly weaker for women than for male.
 
 The whole population in simulation has 10 000 individuals.
+
+### Mechanism of selection
+
+I assumed that data in non-probability sample were collected from some online survey. In order to get this effect I used the logistic formula to get probabilities of taking the survey $\pi_{NP}$ using the following formula:
+
+$\pi_{NP} = \frac{1}{1+e^{- logit\_pi}}$,
+$logit\_pi = \gamma_0 + \gamma_1 age + \gamma_2 (bmi-23)^2$,
+
+where gammas are coefficients. In simulation I used:
+
+- $\gamma_0 = -2.5$,
+- $\gamma_1 = -0.05$, the probability of participation decreases with age,
+- $\gamma_2 = -0.1$, this with used formula ($(bmi-23)^2$) corresponds to the assumption that people with BMI around average are more likely to take a survey about sport, than people with high or low BMI.
+
+A sample of 1000 individuals was drawn with probabilities $\pi_{NP}$.
+
+To ensure no overlap between the samples (as required by the package), the probability sample was drawn uniformly from the population excluding individuals already selected for the non-probability sample. The probability sample has 2000 records.
