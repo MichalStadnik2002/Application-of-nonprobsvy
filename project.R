@@ -163,6 +163,51 @@ ipw_gee_var_sel <- nonprob(
   control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
   control_inference = control_inf(vars_selection = TRUE)
 )
+
+dr_glm_mle <- nonprob(
+  data=non_probability_sample,
+  outcome = time_sport ~ sex + bmi + age,
+  selection = ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'glm',
+  family_outcome = 'gaussian',
+  method_selection = "logit"
+)
+
+dr_glm_gee <- nonprob(
+  data=non_probability_sample,
+  outcome = time_sport ~ sex + bmi + age,
+  selection = ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'glm',
+  family_outcome = 'gaussian',
+  method_selection = "logit",
+  control_sele0ction = control_sel(est_method = "gee", gee_h_fun = 1)
+)
+
+dr_glm_mle_bias_min <- nonprob(
+  data=as.data.frame(non_probability_sample),
+  selection = ~ sex + bmi + age,
+  outcome = time_sport ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'glm',
+  family_outcome = 'gaussian',
+  method_selection = "logit",
+  control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
+)
+
+dr_glm_gee_bias_min <- nonprob(
+  data=as.data.frame(non_probability_sample),
+  outcome = time_sport ~ sex + bmi + age,
+  selection = ~ sex + bmi + age,
+  svydesign = probability_sample_svy,
+  method_outcome = 'glm',
+  family_outcome = 'gaussian',
+  method_selection = "logit",
+  control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
+  control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
+)
+
 methods <- list(
   mi_glm = mi_glm,
   mi_glm_var_sel = mi_glm_var_sel,
@@ -175,7 +220,11 @@ methods <- list(
   ipw = ipw,
   ipw_gee_1 = ipw_gee_1,
   ipw_gee_2 = ipw_gee_2,
-  ipw_gee_var_sel = ipw_gee_var_sel
+  ipw_gee_var_sel = ipw_gee_var_sel,
+  dr_glm_mle = dr_glm_mle,
+  dr_glm_gee = dr_glm_gee,
+  dr_glm_mle_bias_min = dr_glm_mle_bias_min,
+  dr_glm_gee_bias_min = dr_glm_gee_bias_min
 )
 
 raw_results <- sapply(methods, function(method){
