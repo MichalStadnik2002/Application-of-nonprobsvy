@@ -5,17 +5,24 @@ library(ggplot2)
 
 set.seed(0)
 
+betas <- list(beta_0 = 5, beta_age = 0.15, beta_age2 = -0.002, beta_sex = -0.5, beta_bmi = -0.05, beta_sex_bmi2 = 0.01)
+gammas <- list(gamma_0 = -2.5, gamma_1 = -0.05, gamma_2 = -0.1)
+probability_of_female <-  0.51
+bmi_gamma_distibution <- list(shape=4.5, scale = 2.2, shift = 14)
+age_beta_distribution <- list(a=2, b=3, min_age = 18, max_age=80)
+avg_bmi <- 23
+noise_time_sport_sd <- 3
+
+generation_parameters <- list(
+  betas = betas, 
+  probability_of_female = probability_of_female, 
+  bmi_distribution = bmi_gamma_distibution,
+  age_distribution = age_beta_distribution,
+  avg_bmi = avg_bmi,
+  noise_time_sport_sd = noise_time_sport_sd
+)
+
 N <- 10000
-beta_age  <- 0.15
-beta_age2 <- -0.002
-beta_sex <- -0.5
-beta_bmi <- -0.05
-beta_sex_bmi2 <- 0.01
-
-gamma_0 <- -2.5
-gamma_1 <- -0.05
-gamma_2 <- -0.1
-
 n_np <- 1000
 n_p <- 2000
 
