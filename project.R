@@ -26,21 +26,23 @@ N <- 10000
 n_np <- 1000
 n_p <- 2000
 
-population <- tibble(
-  index = 1:N,
-  sex = rbinom(N, 1, 0.51),
-  bmi = rgamma(N, 4.5, scale=2.2)+14,
-  age = rbeta(N, 2, 3)*(80-18)+18,
-  base_time_sport = 5 +
-    beta_age * age +
-    beta_age2 * age^2 +
-    beta_sex * sex +
-    beta_bmi * (bmi - 23)^2 +
-    beta_sex_bmi2 * sex * (bmi - 23)^2,
-  time_sport = pmax(0, base_time_sport + rnorm(N, mean = 0, sd = 3))
-)
-true_mean <- mean(population$time_sport)
-true_sd <- sd(population$time_sport)
+generate_data <- function(N, generation_parameters){
+  population <- tibble(
+    index = 1:N,
+    sex = rbinom(N, 1, generation_parameters$probability_of_female),
+    bmi = rgamma(N, generation_parameters$bmi_distribution$shape, scale=generation_parameters$bmi_distribution$scale)+generation_parameters$bmi_distribution$shift,
+    age = rbeta(N, generation_parameters$age_distribution$a, generation_parameters$age_distribution$b)*(generation_parameters$age_distribution$max_age-generation_parameters$age_distribution$min_age)+generation_parameters$age_distribution$min_age,
+    base_time_sport = generation_parameters$betas$beta_0 +
+      generation_parameters$betas$beta_age * age +
+      generation_parameters$betas$beta_age2 * age^2 +
+      generation_parameters$betas$beta_sex * sex +
+      generation_parameters$betas$beta_bmi * (bmi - generation_parameters$avg_bmi)^2 +
+      generation_parameters$betas$beta_sex_bmi2 * sex * (bmi - generation_parameters$avg_bmi)^2,
+    time_sport = pmax(0, base_time_sport + rnorm(N, mean = 0, sd = generation_parameters$noise_time_sport_sd))
+  )
+  true_mean <- mean(population$time_sport)
+  return(list(population=population, true_mean=true_mean))
+}
 
 
 population <- population |> 
