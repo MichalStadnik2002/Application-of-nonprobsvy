@@ -44,39 +44,44 @@ generate_data <- function(N, generation_parameters){
   return(list(population=population, true_mean=true_mean))
 }
 
+draw_samples <- function(population, gammas, N, n_np, n_p, avg_bmi){
 
-population <- population |> 
-  mutate(
-    logit_pi = gamma_0 + gamma_1 * age + gamma_2 * (bmi-23)^2,
-    pi_np = 1 / (1 + exp(-logit_pi))
+  population <- population |> 
+    mutate(
+      logit_pi = gammas$gamma_0 + gammas$gamma_1 * age + gammas$gamma_2 * (bmi-avg_bmi)^2,
+      pi_np = 1 / (1 + exp(-logit_pi))
+    )
+  
+  
+  non_probability_sample <- population  |> 
+    slice_sample(n = n_np, weight_by = pi_np) |> 
+    select(!c(base_time_sport, logit_pi, pi_np))
+  
+  naive_mean <- mean(non_probability_sample$time_sport)
+  
+  probability_sample <- population |>
+    anti_join(non_probability_sample, by='index') |> 
+    slice_sample(n = n_p) |> 
+    select(!c(base_time_sport, time_sport, logit_pi, pi_np)) |> 
+    mutate(
+      weight = N/n_p,
+      population_size = N
+    )
+
+  
+  probability_sample_svy <- svydesign(
+    ids = ~1,
+    data = probability_sample,
+    weights = ~weight,
+    fpc = ~population_size
   )
-
-
-non_probability_sample <- population  |> 
-  slice_sample(n = n_np, weight_by = pi_np) |> 
-  select(!c(base_time_sport, logit_pi, pi_np))
-
-
-probability_sample <- population |>
-  anti_join(non_probability_sample, by='index') |> 
-  slice_sample(n = n_p) |> 
-  select(!c(base_time_sport, time_sport, logit_pi, pi_np)) |> 
-  mutate(
-    weight = N/n_p,
-    population_size = N
-  )
-
-naive_mean <- mean(non_probability_sample$time_sport)
-naive_sd <- sd(non_probability_sample$time_sport)
-
-
-
-probability_sample_svy <- svydesign(
-  ids = ~1,
-  data = probability_sample,
-  weights = ~weight,
-  fpc = ~population_size
-)
+  
+  return(list(
+    non_probability_sample=non_probability_sample,
+    probability_sample=probability_sample_svy,
+    naive_mean=naive_mean
+  ))
+}
 
 mi_glm <- nonprob(
   data=non_probability_sample, 
