@@ -1,4 +1,8 @@
 library(tidyverse)
+library(nonprobsvy)
+library(survey)
+library(ggplot2)
+
 set.seed(0)
 
 N <- 10000
@@ -7,6 +11,13 @@ beta_age2 <- -0.002
 beta_sex <- -0.5
 beta_bmi <- -0.05
 beta_sex_bmi2 <- 0.01
+
+gamma_0 <- -2.5
+gamma_1 <- -0.05
+gamma_2 <- -0.1
+
+n_np <- 1000
+n_p <- 2000
 
 population <- tibble(
   index = 1:N,
@@ -24,9 +35,6 @@ population <- tibble(
 true_mean <- mean(population$time_sport)
 true_sd <- sd(population$time_sport)
 
-gamma_0 <- -2.5
-gamma_1 <- -0.05
-gamma_2 <- -0.1
 
 population <- population |> 
   mutate(
@@ -34,12 +42,12 @@ population <- population |>
     pi_np = 1 / (1 + exp(-logit_pi))
   )
 
-n_np <- 1000
+
 non_probability_sample <- population  |> 
   slice_sample(n = n_np, weight_by = pi_np) |> 
   select(!c(base_time_sport, logit_pi, pi_np))
 
-n_p <- 2000
+
 probability_sample <- population |>
   anti_join(non_probability_sample, by='index') |> 
   slice_sample(n = n_p) |> 
@@ -52,8 +60,7 @@ probability_sample <- population |>
 naive_mean <- mean(non_probability_sample$time_sport)
 naive_sd <- sd(non_probability_sample$time_sport)
 
-library(nonprobsvy)
-library(survey)
+
 
 probability_sample_svy <- svydesign(
   ids = ~1,
@@ -238,7 +245,6 @@ raw_results <- sapply(methods, function(method){
 )
 results <- as.data.frame(t(raw_results))
 
-library(ggplot2)
 
 ggplot(data=results, aes(y=row.names(results)))+
   geom_errorbar(aes(xmin = lower, xmax = upper))+
