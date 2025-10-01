@@ -83,170 +83,179 @@ draw_samples <- function(population, gammas, N, n_np, n_p, avg_bmi){
   ))
 }
 
-mi_glm <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'glm',
-  family_outcome = 'gaussian'
+run_estimators <- function(non_probability_sample, probability_sample){
+
+  outcome_formula = time_sport ~ sex + bmi + age
+  selection_formula = ~ sex + bmi + age
+  target_formula = ~ time_sport
+  
+  mi_glm <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'glm',
+    family_outcome = 'gaussian'
+    )
+  
+  mi_glm_var_sel <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'glm',
+    family_outcome = 'gaussian',
+    control_outcome = control_out(penalty = "lasso"), 
+    control_inference = control_inf(vars_selection = TRUE)
   )
-
-mi_glm_var_sel <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'glm',
-  family_outcome = 'gaussian',
-  control_outcome = control_out(penalty = "lasso"), 
-  control_inference = control_inf(vars_selection = TRUE)
-)
-
-mi_npar <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'npar',
-)
-
-mi_nn_2 <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'nn',
-  control_outcome = control_out(k=2)
-)
-
-mi_nn_5 <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'nn',
-  control_outcome = control_out(k=5)
-)
-
-mi_nn_10 <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'nn',
-  control_outcome = control_out(k=10)
-)
-
-mi_pmm <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'pmm',
-  family_outcome = 'gaussian'
-)
-
-mi_pmm_2 <- nonprob(
-  data=non_probability_sample, 
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'pmm',
-  family_outcome = 'gaussian',
-  control_outcome = control_out(pmm_match_type = 2)
-)
-
-ipw <- nonprob(
-  data=non_probability_sample, 
-  selection = ~ sex + bmi + age,
-  target = ~ time_sport,
-  svydesign = probability_sample_svy,
-  method_selection = "logit"
-)
-
-ipw_gee_1 <- nonprob(
-  data=non_probability_sample, 
-  selection = ~ sex + bmi + age,
-  target = ~ time_sport,
-  svydesign = probability_sample_svy,
-  method_selection = "logit",
-  control_selection = control_sel(est_method = "gee", gee_h_fun = 1)
-)
-
-ipw_gee_2 <- nonprob(
-  data=non_probability_sample, 
-  selection = ~ sex + bmi + age,
-  target = ~ time_sport,
-  svydesign = probability_sample_svy,
-  method_selection = "logit",
-  control_selection = control_sel(est_method = "gee", gee_h_fun = 2)
-)
-
-ipw_gee_var_sel <- nonprob(
-  data=non_probability_sample, 
-  selection = ~ sex + bmi + age,
-  target = ~ time_sport,
-  svydesign = probability_sample_svy,
-  method_selection = "logit",
-  control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
-  control_inference = control_inf(vars_selection = TRUE)
-)
-
-dr_glm_mle <- nonprob(
-  data=non_probability_sample,
-  outcome = time_sport ~ sex + bmi + age,
-  selection = ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'glm',
-  family_outcome = 'gaussian',
-  method_selection = "logit"
-)
-
-dr_glm_gee <- nonprob(
-  data=non_probability_sample,
-  outcome = time_sport ~ sex + bmi + age,
-  selection = ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'glm',
-  family_outcome = 'gaussian',
-  method_selection = "logit",
-  control_sele0ction = control_sel(est_method = "gee", gee_h_fun = 1)
-)
-
-dr_glm_mle_bias_min <- nonprob(
-  data=as.data.frame(non_probability_sample),
-  selection = ~ sex + bmi + age,
-  outcome = time_sport ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'glm',
-  family_outcome = 'gaussian',
-  method_selection = "logit",
-  control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
-)
-
-dr_glm_gee_bias_min <- nonprob(
-  data=as.data.frame(non_probability_sample),
-  outcome = time_sport ~ sex + bmi + age,
-  selection = ~ sex + bmi + age,
-  svydesign = probability_sample_svy,
-  method_outcome = 'glm',
-  family_outcome = 'gaussian',
-  method_selection = "logit",
-  control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
-  control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
-)
-
-methods <- list(
-  mi_glm = mi_glm,
-  mi_glm_var_sel = mi_glm_var_sel,
-  mi_npar = mi_npar,
-  mi_nn_2 = mi_nn_2,
-  mi_nn_5 = mi_nn_5,
-  mi_nn_10 = mi_nn_10,
-  mi_pmm = mi_pmm,
-  mi_pmm_2 = mi_pmm_2,
-  ipw = ipw,
-  ipw_gee_1 = ipw_gee_1,
-  ipw_gee_2 = ipw_gee_2,
-  ipw_gee_var_sel = ipw_gee_var_sel,
-  dr_glm_mle = dr_glm_mle,
-  dr_glm_gee = dr_glm_gee,
-  dr_glm_mle_bias_min = dr_glm_mle_bias_min,
-  dr_glm_gee_bias_min = dr_glm_gee_bias_min
-)
+  
+  mi_npar <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'npar',
+  )
+  
+  mi_nn_2 <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'nn',
+    control_outcome = control_out(k=2)
+  )
+  
+  mi_nn_5 <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'nn',
+    control_outcome = control_out(k=5)
+  )
+  
+  mi_nn_10 <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'nn',
+    control_outcome = control_out(k=10)
+  )
+  
+  mi_pmm <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'pmm',
+    family_outcome = 'gaussian'
+  )
+  
+  mi_pmm_2 <- nonprob(
+    data=non_probability_sample, 
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'pmm',
+    family_outcome = 'gaussian',
+    control_outcome = control_out(pmm_match_type = 2)
+  )
+  
+  ipw <- nonprob(
+    data=non_probability_sample, 
+    selection = selection_formula,
+    target = target_formula,
+    svydesign = probability_sample,
+    method_selection = "logit"
+  )
+  
+  ipw_gee_1 <- nonprob(
+    data=non_probability_sample, 
+    selection = selection_formula,
+    target = target_formula,
+    svydesign = probability_sample,
+    method_selection = "logit",
+    control_selection = control_sel(est_method = "gee", gee_h_fun = 1)
+  )
+  
+  ipw_gee_2 <- nonprob(
+    data=non_probability_sample, 
+    selection = selection_formula,
+    target = target_formula,
+    svydesign = probability_sample,
+    method_selection = "logit",
+    control_selection = control_sel(est_method = "gee", gee_h_fun = 2)
+  )
+  
+  ipw_gee_var_sel <- nonprob(
+    data=non_probability_sample, 
+    selection = selection_formula,
+    target = target_formula,
+    svydesign = probability_sample,
+    method_selection = "logit",
+    control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
+    control_inference = control_inf(vars_selection = TRUE)
+  )
+  
+  dr_glm_mle <- nonprob(
+    data=non_probability_sample,
+    outcome = outcome_formula,
+    selection = selection_formula,
+    svydesign = probability_sample,
+    method_outcome = 'glm',
+    family_outcome = 'gaussian',
+    method_selection = "logit"
+  )
+  
+  dr_glm_gee <- nonprob(
+    data=non_probability_sample,
+    outcome = outcome_formula,
+    selection = selection_formula,
+    svydesign = probability_sample,
+    method_outcome = 'glm',
+    family_outcome = 'gaussian',
+    method_selection = "logit",
+    control_selection = control_sel(est_method = "gee", gee_h_fun = 1)
+  )
+  
+  dr_glm_mle_bias_min <- nonprob(
+    data=as.data.frame(non_probability_sample),
+    selection = selection_formula,
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'glm',
+    family_outcome = 'gaussian',
+    method_selection = "logit",
+    control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
+  )
+  
+  dr_glm_gee_bias_min <- nonprob(
+    data=as.data.frame(non_probability_sample),
+    outcome = outcome_formula,
+    selection = selection_formula,
+    svydesign = probability_sample,
+    method_outcome = 'glm',
+    family_outcome = 'gaussian',
+    method_selection = "logit",
+    control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
+    control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
+  )
+  
+  methods <- list(
+    mi_glm = mi_glm,
+    mi_glm_var_sel = mi_glm_var_sel,
+    mi_npar = mi_npar,
+    mi_nn_2 = mi_nn_2,
+    mi_nn_5 = mi_nn_5,
+    mi_nn_10 = mi_nn_10,
+    mi_pmm = mi_pmm,
+    mi_pmm_2 = mi_pmm_2,
+    ipw = ipw,
+    ipw_gee_1 = ipw_gee_1,
+    ipw_gee_2 = ipw_gee_2,
+    ipw_gee_var_sel = ipw_gee_var_sel,
+    dr_glm_mle = dr_glm_mle,
+    dr_glm_gee = dr_glm_gee,
+    dr_glm_mle_bias_min = dr_glm_mle_bias_min,
+    dr_glm_gee_bias_min = dr_glm_gee_bias_min
+  )
+  
+  return(methods)
+}
 
 raw_results <- sapply(methods, function(method){
     c(
