@@ -273,26 +273,29 @@ summarize_results <- function(methods){
   return(results)
 }
 
+plot_results <- function(results, true_mean, naive_mean){
+  plot <- ggplot(data=results, aes(y=method))+
+    geom_errorbar(aes(xmin = lower, xmax = upper))+
+    geom_point(aes(x=mean))+
+    geom_vline(aes(xintercept = true_mean, color = "True Mean"), linetype = "dashed") +
+    geom_vline(aes(xintercept = naive_mean, color = "Naive Mean"), linetype = "dotted") +
+    scale_color_manual(
+      name = "Reference Lines",
+      values = c("True Mean" = "red", "Naive Mean" = "darkgrey")
+    ) +
+    coord_cartesian(xlim = c(5.9, 8))
+    labs(
+      title = "Comparison of Mean Estimators for Non-Probability Samples",
+      subtitle = "Simulation study using the 'nonprobsvy' package",
+      x = "Estimated Average Weekly Hours of Sport",
+      y = "Estimation Method",
+      caption = paste("True population mean (red) =", round(true_mean, 2))
+    ) +
+    theme_bw() +
+    theme(
+      plot.title = element_text(face = "bold", size = 14),
+      axis.text.y = element_text(size = 10)
+    )
+  return(plot)
+}
 
-ggplot(data=results, aes(y=row.names(results)))+
-  geom_errorbar(aes(xmin = lower, xmax = upper))+
-  geom_point(aes(x=mean))+
-  geom_vline(aes(xintercept = true_mean, color = "True Mean"), linetype = "dashed") +
-  geom_vline(aes(xintercept = naive_mean, color = "Naive Mean"), linetype = "dotted") +
-  scale_color_manual(
-    name = "Reference Lines",
-    values = c("True Mean" = "red", "Naive Mean" = "darkgrey")
-  ) +
-  #coord_cartesian(xlim = c(5.9, 8.1))+
-  labs(
-    title = "Comparison of Mean Estimators for Non-Probability Samples",
-    subtitle = "Simulation study using the 'nonprobsvy' package",
-    x = "Estimated Average Weekly Hours of Sport",
-    y = "Estimation Method",
-    caption = paste("True population mean (red) =", round(true_mean, 2))
-  ) +
-  theme_bw() +
-  theme(
-    plot.title = element_text(face = "bold", size = 14),
-    axis.text.y = element_text(size = 10)
-  )
