@@ -299,3 +299,17 @@ plot_results <- function(results, true_mean, naive_mean){
   return(plot)
 }
 
+generated_data <- generate_data(N, generation_parameters)
+population <- generated_data$population
+true_mean <- generated_data$true_mean
+
+samples <- draw_samples(population, gammas, N, n_np, n_p, avg_bmi)
+np_sample <- samples$non_probability_sample
+p_sample <- samples$probability_sample
+naive_mean <- samples$naive_mean
+
+methods <- run_estimators(np_sample, p_sample)
+
+results <- summarize_results(methods)
+
+plot_results(results, true_mean, naive_mean)
