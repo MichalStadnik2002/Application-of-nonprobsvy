@@ -212,18 +212,7 @@ run_estimators <- function(non_probability_sample, probability_sample){
     control_selection = control_sel(est_method = "gee", gee_h_fun = 1)
   )
   
-  dr_glm_mle_bias_min <- nonprob(
-    data=as.data.frame(non_probability_sample),
-    selection = selection_formula,
-    outcome = outcome_formula,
-    svydesign = probability_sample,
-    method_outcome = 'glm',
-    family_outcome = 'gaussian',
-    method_selection = "logit",
-    control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
-  )
-  
-  dr_glm_gee_bias_min <- nonprob(
+  dr_glm_bias_min_1 <- nonprob(
     data=as.data.frame(non_probability_sample),
     outcome = outcome_formula,
     selection = selection_formula,
@@ -232,6 +221,18 @@ run_estimators <- function(non_probability_sample, probability_sample){
     family_outcome = 'gaussian',
     method_selection = "logit",
     control_selection = control_sel(est_method = "gee", gee_h_fun = 1),
+    control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
+  )
+  
+  dr_glm_bias_min_2 <- nonprob(
+    data=as.data.frame(non_probability_sample),
+    selection = selection_formula,
+    outcome = outcome_formula,
+    svydesign = probability_sample,
+    method_outcome = 'glm',
+    family_outcome = 'gaussian',
+    method_selection = "logit",
+    control_selection = control_sel(est_method = "gee", gee_h_fun = 2),
     control_inference = control_inf(vars_combine = TRUE, vars_selection = TRUE, bias_correction = TRUE)
   )
   
@@ -250,8 +251,8 @@ run_estimators <- function(non_probability_sample, probability_sample){
     ipw_gee_var_sel = ipw_gee_var_sel,
     dr_glm_mle = dr_glm_mle,
     dr_glm_gee = dr_glm_gee,
-    dr_glm_mle_bias_min = dr_glm_mle_bias_min,
-    dr_glm_gee_bias_min = dr_glm_gee_bias_min
+    dr_glm_bias_min_1 = dr_glm_bias_min_1,
+    dr_glm_bias_min_2 = dr_glm_bias_min_2
   )
   
   return(methods)
@@ -283,7 +284,7 @@ plot_results <- function(results, true_mean, naive_mean){
       name = "Reference Lines",
       values = c("True Mean" = "red", "Naive Mean" = "darkgrey")
     ) +
-    coord_cartesian(xlim = c(5.9, 8))
+    coord_cartesian(xlim = c(5.9, 8)) +
     labs(
       title = "Comparison of Mean Estimators for Non-Probability Samples",
       subtitle = "Simulation study using the 'nonprobsvy' package",
