@@ -1,7 +1,7 @@
 Verification of Estimators for Non-Probability Samples in R
 ================
 Michał Stadnik
-2025-09-30
+2025-10-03
 
 In this project I investigated the concepts of `nonprobsvy` library to
 check how different estimators behave. There is a simulation of a
@@ -126,8 +126,8 @@ I used following methods:
 - Doubly Robust:
   - MI-GLM and MLE Estimator,
   - MI-GLM and GEE Estimator with `gee_h_fun = 1`,
-  - MI-GLM and MLE Estimator with bias correction,
   - MI-GLM and GEE Estimator with `gee_h_fun = 1` with bias correction,
+  - MI-GLM and GEE Estimator with `gee_h_fun = 2` with bias correction,
 
 For reference purposes I also calculated the true population mean, and
 the naive mean, i.e. ordinary mean in non-probability sample.
@@ -144,24 +144,24 @@ line.
 
 Here is also the table with the results:
 
-| Estimator           | mean     | sd          | lower    | upper    |
-|---------------------|----------|-------------|----------|----------|
-| mi_glm              | 7.125960 | 0.125350518 | 6.880278 | 7.371643 |
-| mi_glm_var_sel      | 7.139525 | 0.125721603 | 6.893115 | 7.385934 |
-| mi_npar             | 6.004240 | 0.095343432 | 5.817371 | 6.191110 |
-| mi_nn_2             | 6.710988 | 0.044896895 | 6.622991 | 6.798984 |
-| mi_nn_5             | 6.858930 | 0.029078144 | 6.801938 | 6.915922 |
-| mi_nn_10            | 6.874241 | 0.021044160 | 6.832995 | 6.915486 |
-| mi_pmm              | 6.765816 | 0.030146067 | 6.706731 | 6.824901 |
-| mi_pmm_2            | 7.125875 | 0.007859339 | 7.110471 | 7.141279 |
-| ipw                 | 6.840697 | 0.432708215 | 5.992604 | 7.688789 |
-| ipw_gee_1           | 6.959392 | 0.514421215 | 5.951145 | 7.967639 |
-| ipw_gee_2           | 6.840697 | 0.432708215 | 5.992604 | 7.688789 |
-| ipw_gee_var_sel     | 6.959392 | 0.514421215 | 5.951145 | 7.967639 |
-| dr_glm_mle          | 7.005543 | 0.192400583 | 6.628445 | 7.382641 |
-| dr_glm_gee          | 7.005543 | 0.192400583 | 6.628445 | 7.382641 |
-| dr_glm_mle_bias_min | 6.996586 | 0.031234612 | 6.935367 | 7.057805 |
-| dr_glm_gee_bias_min | 6.996586 | 0.031234612 | 6.935367 | 7.057805 |
+| Estimator         | mean     | sd            | lower       | upper      |
+|-------------------|----------|---------------|-------------|------------|
+| mi_glm            | 7.125960 | 0.125350518   | 6.880278    | 7.371643   |
+| mi_glm_var_sel    | 7.139525 | 0.125721603   | 6.893115    | 7.385934   |
+| mi_npar           | 6.004240 | 0.095343432   | 5.817371    | 6.191110   |
+| mi_nn_2           | 6.710988 | 0.044896895   | 6.622991    | 6.798984   |
+| mi_nn_5           | 6.858930 | 0.029078144   | 6.801938    | 6.915922   |
+| mi_nn_10          | 6.874241 | 0.021044160   | 6.832995    | 6.915486   |
+| mi_pmm            | 6.765816 | 0.030146067   | 6.706731    | 6.824901   |
+| mi_pmm_2          | 7.125875 | 0.007859339   | 7.110471    | 7.141279   |
+| ipw               | 6.840697 | 0.432708215   | 5.992604    | 7.688789   |
+| ipw_gee_1         | 6.959392 | 0.514421215   | 5.951145    | 7.967639   |
+| ipw_gee_2         | 6.840697 | 0.432708215   | 5.992604    | 7.688789   |
+| ipw_gee_var_sel   | 6.959392 | 0.514421215   | 5.951145    | 7.967639   |
+| dr_glm_mle        | 7.005543 | 0.192400583   | 6.628445    | 7.382641   |
+| dr_glm_gee        | 6.959392 | 274.244567866 | -530.550084 | 544.468868 |
+| dr_glm_bias_min_1 | 6.996586 | 0.031234612   | 6.935367    | 7.057805   |
+| dr_glm_bias_min_2 | 6.996586 | 0.031234612   | 6.935367    | 7.057805   |
 
 The naive mean equals $7.14$ and the true mean equals $6.33$.
 
@@ -196,38 +196,38 @@ was observed with other seeds, more or less.
 
 The IPW approach gave us definitely less precise results. The standard
 deviation of all methods across this approach were about $0.5$. These
-were the highest values among all methods. This is likely because there
-are only a very small number of people with some characteristic (for
-example old people) and they are assigned very high weights. This causes
-relatively high standard deviation and wide confidence intervals. Notice
-that IPW-MLE and IPW-GEE with the second function estimators have the
-same values for both the mean and the standard deviation (and in
-confidence intervals). It is quite interesting result. For some reason
-these two similar but different methods gave us the same results.
-Similarly, the same values of all parameters were observed for IPW-GEE
-and IPW-GEE with variable selection, both for first h function. Here the
-explanation is simpler - the variable selection algorithm probably
-calculated that all of these three variables were important and did not
-exclude any of these. Applying variable selection to a model with only
-three variables is generally not necessary, as it is designed for
-high-dimensional problems. However, it was included here to verify this
-behavior. These methods gave us approximated means $6.96$ hours for
-IPW-GEE with first h function and $6.84$ hours for IPW-MLE and IPW-GEE
-with second h function. While these estimates successfully reduced some
-of the bias, they remained relatively imprecise.
+were the highest values among almost all methods (excluding dr_glm_gee).
+This is likely because there are only a very small number of people with
+some characteristic (for example old people) and they are assigned very
+high weights. This causes relatively high standard deviation and wide
+confidence intervals. As expected, the IPW-MLE and the IPW-GEE estimator
+with the second h-function have the same results. They are indeed the
+same methods, as it was described in the paper. Similarly, the same
+values of all parameters were observed for IPW-GEE and IPW-GEE with
+variable selection, both for first h function. Probably because the
+variable selection algorithm calculated that all of these three
+variables were important and did not exclude any of these. Applying
+variable selection to a model with only three variables is generally not
+necessary, as it is designed for high-dimensional problems. However, it
+was included here to verify this behavior. These methods gave us mean
+estimates of $6.96$ hours for IPW-GEE with first h function and $6.84$
+hours for IPW-MLE. While these estimates successfully reduced some of
+the bias, they remained relatively imprecise.
 
-Interestingly, with DR estimators, we can see that for different method
-for estimating the propensity scores (MLE or GEE with first h function)
-yielded identical results. The same observation can be made for the
-estimators with bias correction - both MLE or GEE variants produced the
-same estimates. Also bias correction had marginal effect on the
-estimated mean. However we can clearly see that the bias-corrected
-estimators had a smaller standard deviation. Without using this
-algorithm it was approximately $0.19$ and while the bias-corrected
-versions achieved a result around $0.03$, so it is gain in precision.
-However, the estimated mean was closer to naive mean than the true mean
-and it was about $7$ hours. It is also worth noting that when I used
-random seeds for some seeds the standard deviation and confidence
-interval for GEE method “blew up” to very high numbers (e.g., $> 80$).
-This result was not consistently reproducible, which highlights the
-method’s potential instability under certain data conditions.
+For DR methods we can see quite complex behavior. DR-GLM with MLE IPW
+algorithm gave us standard deviation approximately $0.19$, which
+compared to other methods is worse than MI methods, but better than IPW
+methods. However for GEE algorithm we can see an extremely large
+standard error. This is likely caused by numerical instability while
+calculating inverse weights. Maybe it is the same effect which caused
+relatively high values of standard deviation for IPW methods, but this
+effect is dramatically amplified. Of course, absurdly high standard
+deviation provides absurdly high confidence interval. The bias
+correction had a marginal effect on the estimated mean. However we can
+clearly see that the bias-corrected estimators had a smaller standard
+deviation. Without using this algorithm it was approximately $0.19$ for
+DR-GLM-MLE and while the bias-corrected versions achieved a result
+around $0.03$, so this is a substantial gain in precision. However, the
+estimated mean was closer to naive mean than the true mean and it was
+about $7$ hours. Interestingly, for both variants of h function, bias
+optimization methods gave us the same results.
