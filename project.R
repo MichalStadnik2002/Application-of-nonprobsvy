@@ -257,16 +257,21 @@ run_estimators <- function(non_probability_sample, probability_sample){
   return(methods)
 }
 
-raw_results <- sapply(methods, function(method){
-    c(
-      mean = method$output$mean,
-      se = method$output$SE,
-      lower = method$confidence_interval$lower_bound,
-      upper = method$confidence_interval$upper_bound
-    )
-  }
-)
-results <- as.data.frame(t(raw_results))
+summarize_results <- function(methods){
+  raw_results <- sapply(methods, function(method){
+      c(
+        mean = method$output$mean,
+        se = method$output$SE,
+        lower = method$confidence_interval$lower_bound,
+        upper = method$confidence_interval$upper_bound
+      )
+    }
+  )
+  results <- as.data.frame(t(raw_results))
+  results <- rownames_to_column(results)
+  colnames(results)[1] = "method"
+  return(results)
+}
 
 
 ggplot(data=results, aes(y=row.names(results)))+
